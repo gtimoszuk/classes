@@ -127,4 +127,44 @@ public class SimpleEntityClassTest extends AbstractDLPTest {
 		}
 	}
 
+	@Test
+	public void deteleTest() {
+		System.out.println("deteleTest");
+		PrimaryIndex<String, SimpleEntityClass> pi = entityStore
+				.getPrimaryIndex(String.class, SimpleEntityClass.class);
+
+		SecondaryIndex<String, String, SimpleEntityClass> si = entityStore
+				.getSecondaryIndex(pi, String.class, "sKey");
+
+		EntityCursor<SimpleEntityClass> sec_cursor = si.subIndex("skeyone")
+				.entities();
+		sec_cursor.first();
+
+		try {
+			System.out.println("removing");
+			SimpleEntityClass sec;
+			while ((sec = sec_cursor.nextDup()) != null) {
+				if (sec.getSKey() == "some value") {
+					sec_cursor.delete();
+				}
+			}
+		} finally {
+			sec_cursor.close();
+		}
+
+		try {
+			System.out.println("checking if removing has been successful");
+			si = entityStore.getSecondaryIndex(pi, String.class, "sKey");
+			sec_cursor = si.subIndex("skeyone").entities();
+
+			for (SimpleEntityClass seci : sec_cursor) {
+				System.out.println(seci);
+			}
+
+			// Always make sure the cursor is closed when we are done with it.
+		} finally {
+			sec_cursor.close();
+		}
+	}
+
 }
