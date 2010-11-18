@@ -10,7 +10,7 @@ import com.sleepycat.je.EnvironmentConfig;
 import com.sleepycat.persist.EntityStore;
 import com.sleepycat.persist.StoreConfig;
 
-public class AbstractDLPTest {
+public abstract class AbstractDLPTest {
 	
 	protected final static File ENV_HOME=new File("./target/bdb/test1");
 	
