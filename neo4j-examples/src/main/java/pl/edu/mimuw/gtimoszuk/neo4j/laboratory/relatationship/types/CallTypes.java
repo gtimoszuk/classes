@@ -7,8 +7,7 @@ import org.neo4j.graphdb.RelationshipType;
  * @author gtimoszuk
  * 
  */
-public enum ContainmentTypes implements RelationshipType {
+public enum CallTypes implements RelationshipType {
 
-	CONTAINS, IS_CONTAINED
-
+	CALLS, IS_CALLED
 }

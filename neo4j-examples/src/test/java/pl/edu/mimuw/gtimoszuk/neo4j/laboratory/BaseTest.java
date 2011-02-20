@@ -14,19 +14,22 @@ public class BaseTest {
 
 	private final static String DB_LOCATION = "/tmp/neo4j";
 
-	protected GraphDatabaseService graphDb;
+	protected static GraphDatabaseService graphDb;
 
-	public void dbSetup() {
+	public static void dbRemove() {
 		deleteDir(new File(DB_LOCATION));
+	}
+
+	public static void dbSetup() {
 		graphDb = new EmbeddedGraphDatabase(DB_LOCATION);
 
 	}
 
-	public void dbTearDown() {
+	public static void dbTearDown() {
 		graphDb.shutdown();
 	}
 
-	protected boolean deleteDir(File dir) {
+	protected static boolean deleteDir(File dir) {
 		if (dir.isDirectory()) {
 			String[] children = dir.list();
 			for (int i = 0; i < children.length; i++) {
@@ -48,4 +51,12 @@ public class BaseTest {
 	public void setGraphDb(GraphDatabaseService graphDb) {
 		this.graphDb = graphDb;
 	}
+
+	/**
+	 * db stucture
+	 */
+	public static void sampleDB() {
+
+	}
+
 }
