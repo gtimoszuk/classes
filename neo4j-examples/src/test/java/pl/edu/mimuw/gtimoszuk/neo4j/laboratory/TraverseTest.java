@@ -57,7 +57,6 @@ public class TraverseTest extends BaseTest {
 				LOG.info((String) iterator.next().getProperty(NAME_PROPERTY_KEY));
 
 			}
-			tx.success();
 		} finally {
 			tx.finish();
 		}
@@ -83,7 +82,6 @@ public class TraverseTest extends BaseTest {
 
 			}
 
-			tx.success();
 		} finally {
 			tx.finish();
 		}
