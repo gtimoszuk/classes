@@ -70,7 +70,7 @@ public class TraverseTest extends BaseTest {
 			Node a = graphDb.getNodeById(nodesToIds.get(A));
 
 			TraversalDescription traversalDescription = new TraversalDescriptionImpl();
-			traversalDescription = traversalDescription.depthFirst();
+			traversalDescription = traversalDescription.breadthFirst();
 			traversalDescription = traversalDescription.evaluator(Evaluators.excludeStartPosition());
 			traversalDescription = traversalDescription.evaluator(Evaluators.toDepth(1));
 			traversalDescription.relationships(ContainmentTypes.CONTAINS, Direction.OUTGOING);

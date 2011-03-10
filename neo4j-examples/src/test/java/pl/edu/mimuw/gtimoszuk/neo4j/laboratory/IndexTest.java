@@ -26,14 +26,14 @@ public class IndexTest extends BaseTest {
 
 	private final static Logger LOG = LoggerFactory.getLogger(IndexTest.class);
 	static Map<String, Long> nodesToIds;
-	static IndexService index;
+	static IndexService indexService;
 
 	@BeforeClass
 	public static void staticSetup() {
 		dbRemove();
 		dbSetup();
 		nodesToIds = createSampleDB();
-		index = new LuceneIndexService(graphDb);
+		indexService = new LuceneIndexService(graphDb);
 
 	}
 
@@ -50,10 +50,10 @@ public class IndexTest extends BaseTest {
 			// IndexService.
 			Node personNode = graphDb.createNode();
 			personNode.setProperty("name", "Thomas Anderson");
-			index.index(personNode, "name", personNode.getProperty("name"));
+			indexService.index(personNode, "name", personNode.getProperty("name"));
 
 			// Get the node with the name "Mattias Persson"
-			Node node = index.getSingleNode("name", "Thomas Anderson");
+			Node node = indexService.getSingleNode("name", "Thomas Anderson");
 			// also see index.getNodes method.
 			LOG.info("Node id: " + node.getId() + " node name property: " + node.getProperty("name"));
 			assert personNode.equals(node);
