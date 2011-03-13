@@ -3,6 +3,7 @@ package pl.edu.mimuw.gtimoszuk.db4o;
 import java.io.File;
 import java.util.List;
 
+import pl.edu.mimuw.gtimoszuk.db4o.domain.Car;
 import pl.edu.mimuw.gtimoszuk.db4o.domain.Pilot;
 
 import com.db4o.Db4oEmbedded;
@@ -53,5 +54,19 @@ public class BaseTest {
 		Pilot pilot2 = new Pilot("Rubens Barrichello", 99);
 		db.store(pilot2);
 
+	}
+
+	protected static void carsWithPilorsLoaded() {
+
+		Car car1 = new Car("Ferrari");
+		Pilot pilot1 = new Pilot("Michael Schumacher", 100);
+		car1.setPilot(pilot1);
+		db.store(car1);
+
+		Pilot pilot2 = new Pilot("Rubens Barrichello", 99);
+		db.store(pilot2);
+		Car car2 = new Car("BMW");
+		car2.setPilot(pilot2);
+		db.store(car2);
 	}
 }
