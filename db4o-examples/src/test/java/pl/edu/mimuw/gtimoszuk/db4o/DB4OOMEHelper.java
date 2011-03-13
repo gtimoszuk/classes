@@ -1,5 +1,7 @@
 package pl.edu.mimuw.gtimoszuk.db4o;
 
+import java.io.File;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +25,7 @@ public class DB4OOMEHelper {
 
 	@Before
 	public void dbOpen() {
+		new File(DB4OFILENAME).delete();
 		db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),
 				DB4OFILENAME);
 	}
