@@ -7,7 +7,7 @@ import pl.edu.mimuw.gtimoszuk.db4o.domain.Pilot;
 import com.db4o.ObjectSet;
 import com.db4o.query.Query;
 
-public class SODAQueries extends BaseTest {
+public class SODAQueriesTest extends BaseTest {
 
 	@Test
 	public void simpleGet() {

@@ -17,7 +17,7 @@ import com.db4o.query.Predicate;
  * @author gtimoszuk
  * 
  */
-public class QueriesTest extends BaseTest {
+public class NativeQueriesTest extends BaseTest {
 
 	@BeforeClass
 	public static void before() {
