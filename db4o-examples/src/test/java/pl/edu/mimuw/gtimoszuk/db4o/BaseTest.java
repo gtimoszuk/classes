@@ -3,6 +3,8 @@ package pl.edu.mimuw.gtimoszuk.db4o;
 import java.io.File;
 import java.util.List;
 
+import pl.edu.mimuw.gtimoszuk.db4o.domain.Pilot;
+
 import com.db4o.Db4oEmbedded;
 import com.db4o.ObjectContainer;
 
@@ -40,5 +42,16 @@ public class BaseTest {
 		for (Object o : result) {
 			System.out.println(o);
 		}
+	}
+
+	/**
+	 * This method assumes existing DB!!
+	 */
+	protected static void pilotsLoader() {
+		Pilot pilot1 = new Pilot("Michael Schumacher", 100);
+		db.store(pilot1);
+		Pilot pilot2 = new Pilot("Rubens Barrichello", 99);
+		db.store(pilot2);
+
 	}
 }
