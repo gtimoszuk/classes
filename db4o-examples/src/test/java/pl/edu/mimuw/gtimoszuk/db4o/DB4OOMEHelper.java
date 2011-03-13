@@ -15,7 +15,7 @@ import com.db4o.ObjectContainer;
  * @author gtimoszuk
  * 
  */
-public class EmptyDB4OCreator {
+public class DB4OOMEHelper {
 
 	private static final String DB4OFILENAME = "/home/ballo0/GTI/zajecia/db4o/sampleDB";
 
