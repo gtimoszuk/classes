@@ -136,6 +136,9 @@ public class CollectionsExampleTest extends BaseTest {
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void retrieveCollections() {
+		// We can also query for the collections themselves, since they are
+		// first class objects.
+
 		ObjectSet result = db.queryByExample(new ArrayList());
 		listResult(result);
 
