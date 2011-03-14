@@ -32,9 +32,18 @@ public class BaseTest {
 
 	}
 
+	public void openDB() {
+		if (db == null) {
+			db = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(),
+					DB4OFILENAME);
+		}
+
+	}
+
 	public static void dbClose() {
 		if (db != null) {
 			db.close();
+			db = null;
 		}
 	}
 
@@ -67,6 +76,24 @@ public class BaseTest {
 		db.store(pilot2);
 		Car car2 = new Car("BMW");
 		car2.setPilot(pilot2);
+		db.store(car2);
+	}
+
+	protected static void carsWithSensorsLoader() {
+		// storeFirstCar
+		Car car1 = new Car("Ferrari");
+		Pilot pilot1 = new Pilot("Michael Schumacher", 100);
+		car1.setPilot(pilot1);
+		db.store(car1);
+
+		// The second car will take two snapshots immediately at startup.
+
+		// storeSecondCar
+		Pilot pilot2 = new Pilot("Rubens Barrichello", 99);
+		Car car2 = new Car("BMW");
+		car2.setPilot(pilot2);
+		car2.snapshot();
+		car2.snapshot();
 		db.store(car2);
 	}
 }

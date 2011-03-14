@@ -3,6 +3,7 @@ package pl.edu.mimuw.gtimoszuk.db4o;
 import java.io.File;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import pl.edu.mimuw.gtimoszuk.db4o.domain.Pilot;
@@ -17,6 +18,7 @@ import com.db4o.ObjectContainer;
  * @author gtimoszuk
  * 
  */
+@Ignore
 public class DB4OOMEHelper {
 
 	private static final String DB4OFILENAME = "/home/ballo0/GTI/zajecia/db4o/sampleDB";
