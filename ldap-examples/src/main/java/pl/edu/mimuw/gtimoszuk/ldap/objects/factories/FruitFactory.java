@@ -1,4 +1,4 @@
-package pl.edu.mimuw.gtimoszuk;
+package pl.edu.mimuw.gtimoszuk.ldap.objects.factories;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -33,42 +33,35 @@ package pl.edu.mimuw.gtimoszuk;
 
 import java.util.Hashtable;
 
-import javax.naming.Binding;
 import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.Name;
+import javax.naming.RefAddr;
+import javax.naming.Reference;
+import javax.naming.spi.ObjectFactory;
+
+import pl.edu.mimuw.gtimoszuk.ldap.objects.Fruit;
 
 /**
- * Demonstrates how to list the bindings in a context.
- * 
- * usage: java ListBindings
+ * This is an object factory that when given a reference for a Fruit object, will create an instance of the
+ * corresponding Fruit.
  */
-class ListBindings {
-	public static void main(String[] args) {
+public class FruitFactory implements ObjectFactory {
 
-		// Set up the environment for creating the initial context
-		Hashtable<String, Object> env = new Hashtable<String, Object>(11);
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://localhost:389/o=JNDITutorial");
+	public FruitFactory() {
+	}
 
-		try {
-			// Create the initial context
-			Context ctx = new InitialContext(env);
+	public Object getObjectInstance(Object obj, Name name, Context ctx, Hashtable<?, ?> env) throws Exception {
 
-			// Get listing of context
-			NamingEnumeration bindings = ctx.listBindings("ou=People");
+		if (obj instanceof Reference) {
+			Reference ref = (Reference) obj;
 
-			// Go through each item in list
-			while (bindings.hasMore()) {
-				Binding bd = (Binding) bindings.next();
-				System.out.println(bd.getName() + ": " + bd.getObject());
+			if (ref.getClassName().equals(Fruit.class.getName())) {
+				RefAddr addr = ref.get("fruit");
+				if (addr != null) {
+					return new Fruit((String) addr.getContent());
+				}
 			}
-
-			// Close the context when we're done
-			ctx.close();
-		} catch (NamingException e) {
-			System.out.println("List Bindings failed: " + e);
 		}
+		return null;
 	}
 }

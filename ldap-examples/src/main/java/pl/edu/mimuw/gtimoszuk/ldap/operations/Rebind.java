@@ -1,4 +1,4 @@
-package pl.edu.mimuw.gtimoszuk;
+package pl.edu.mimuw.gtimoszuk.ldap.operations;
 
 /*
  * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
@@ -35,40 +35,44 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
+import pl.edu.mimuw.gtimoszuk.ldap.objects.Fruit;
+
 /**
- * Demonstrates how to list the name and class of objects in a context.
+ * Demonstrates how to overwrite an existing binding. (Use after Bind example; Use Unbind to remove binding).
  * 
- * usage: java List
+ * usage: java Rebind
  */
-class List {
+class Rebind {
 	public static void main(String[] args) {
 
 		// Set up the environment for creating the initial context
 		Hashtable<String, Object> env = new Hashtable<String, Object>(11);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		env.put(Context.PROVIDER_URL, "ldap://localhost:11389/o=JNDITutorial");
+		env.put(Context.SECURITY_AUTHENTICATION, "simple");
+		env.put(Context.SECURITY_PRINCIPAL, "cn=Directory Manager");
+		env.put(Context.SECURITY_CREDENTIALS, "password");
 
 		try {
 			// Create the initial context
 			Context ctx = new InitialContext(env);
 
-			// Get listing of context
-			NamingEnumeration list = ctx.list("ou=People");
+			// Create the object to be bound
+			Fruit fruit = new Fruit("lemon");
 
-			// Go through each item in list
-			while (list.hasMore()) {
-				NameClassPair nc = (NameClassPair) list.next();
-				System.out.println(nc);
-			}
+			// Perform the bind
+			ctx.rebind("cn=Favorite Fruit", fruit);
+
+			// Check that it is bound
+			Object obj = ctx.lookup("cn=Favorite Fruit");
+			System.out.println(obj);
 
 			// Close the context when we're done
 			ctx.close();
 		} catch (NamingException e) {
-			System.out.println("List failed: " + e);
+			System.out.println("Operation failed: " + e);
 		}
 	}
 }
