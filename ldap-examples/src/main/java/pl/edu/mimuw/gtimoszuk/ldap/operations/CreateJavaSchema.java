@@ -1,93 +1,9 @@
 package pl.edu.mimuw.gtimoszuk.ldap.operations;
 
-/*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *
- *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *
- *   - Neither the name of Oracle or the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-/*
- * Creates a schema for storing Java objects according to RFC 2713
- * After running this program, you should verify that the schema 
- * has been updated correctly by using the directory server's 
- * administration tool. If the schema has not been properly updated, 
- * use the administration tool to correct it.
- *
- * You should first turn off schema-checking at the directory server 
- * before running this program.
- *
- * usage:
- * java [-Djava.naming.provider.url=<ldap_server_url>] \
- *     CreateJavaSchema [-h|-l|-s[n|n41|ad]] [-n<dn>] [-p<passwd>] [-a<auth>] 
- *      
- * -h		Print the usage message
- * 
- * -l		List the Java schema in the directory
- * 
- * -s[n|n41|ad]	Update schema:
- *                -sn   means use a workaround for schema bugs in
- *                      pre-4.1 releases of Netscape Directory Server;
- * 
- *		  -sn41 means use a workaround for schema bugs in
- *                      Netscape Directory Server version 4.1;
- *
- *		  -sad  means use a workaround for schema bugs in
- *                      Microsoft Windows 2000 Active Directory
- *
- * -n<dn> 	Use <dn> as the distinguished name for authentication
- * 
- * -p<passwd>	Use <passwd> as the password for authentication
- * 
- * -a<auth>	Use <auth> as the authentication mechanism. Default is "simple".
- * 
- *
- * If neither -s, -l, nor -h has been specified, the default is "-l".
- *
- * The following example inserts the Java schema from RFC 2713 in a
- * Netscape Directory (using the workaround for 4.1 schema bugs),
- * logging in as "cn=directory manager" with the password "secret":
- * 
- *     java CreateJavaSchema -sn41 "-ncn=directory manager" -psecret
- *
- * @author Rosanna Lee
- */
-
-import java.util.Hashtable;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.ModificationItem;
+import javax.naming.directory.*;
+import java.util.Hashtable;
 
 public class CreateJavaSchema {
 
@@ -116,7 +32,9 @@ public class CreateJavaSchema {
 	private static String[] allOCs = { "javaObject", "javaNamingReference", "javaSerializedObject", "javaRemoteObject",
 	        "javaMarshalledObject", "javaContainer" };
 
-	public static void main(String[] args) {
+    public static final int ldapPort = 1389;
+
+    public static void main(String[] args) {
 		new CreateJavaSchema().run(args, allAttrs, allOCs);
 	}
 
@@ -153,6 +71,8 @@ public class CreateJavaSchema {
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 
 		env.put(Context.REFERRAL, "follow");
+
+        env.put(Context.PROVIDER_URL, "ldap://localhost:" + ldapPort + "/o=JNDITutorial");
 
 		if (auth != null) {
 			env.put(Context.SECURITY_AUTHENTICATION, auth);

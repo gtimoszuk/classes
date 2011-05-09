@@ -31,18 +31,14 @@ package pl.edu.mimuw.gtimoszuk.ldap.operations.subcontext;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Hashtable;
+import pl.edu.mimuw.gtimoszuk.ldap.ConnectionUtils;
 
 import javax.naming.Context;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.*;
+import java.util.Hashtable;
 
 /**
  * Demonstrates how to create a new subcontext called "ou=NewOu" with some attributes. (Run Destroy after this to remove
@@ -54,12 +50,7 @@ class CreateSubcontext {
 	public static void main(String[] args) {
 
 		// Set up the environment for creating the initial context
-		Hashtable<String, Object> env = new Hashtable<String, Object>(11);
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://localhost:11389/o=JNDITutorial");
-		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-		env.put(Context.SECURITY_PRINCIPAL, "cn=Directory Manager");
-		env.put(Context.SECURITY_CREDENTIALS, "password");
+        Hashtable<String, Object> env = ConnectionUtils.prepareDirectoryManagerSignUpEnvironment();
 
 		try {
 			// Create the initial context

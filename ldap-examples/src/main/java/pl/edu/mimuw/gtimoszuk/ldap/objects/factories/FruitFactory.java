@@ -31,15 +31,14 @@ package pl.edu.mimuw.gtimoszuk.ldap.objects.factories;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Hashtable;
+import pl.edu.mimuw.gtimoszuk.ldap.objects.Fruit;
 
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.RefAddr;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-
-import pl.edu.mimuw.gtimoszuk.ldap.objects.Fruit;
+import java.util.Hashtable;
 
 /**
  * This is an object factory that when given a reference for a Fruit object, will create an instance of the

@@ -31,12 +31,13 @@ package pl.edu.mimuw.gtimoszuk.ldap.security;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Hashtable;
+import pl.edu.mimuw.gtimoszuk.ldap.ConnectionUtils;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
 
 /**
  * Demonstrates how to use different authentication information for one context.
@@ -47,9 +48,7 @@ class UseDiff {
 	public static void main(String[] args) {
 
 		// Set up environment for creating initial context
-		Hashtable<String, Object> env = new Hashtable<String, Object>(11);
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://localhost:11389/o=JNDITutorial");
+        Hashtable<String, Object> env = ConnectionUtils.prepareAnonymousSignUpEnvironment();
 
 		// Authenticate as S. User and password "mysecret"
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");

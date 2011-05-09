@@ -31,9 +31,8 @@ package pl.edu.mimuw.gtimoszuk.ldap.operations.search;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Hashtable;
+import pl.edu.mimuw.gtimoszuk.ldap.ConnectionUtils;
 
-import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.SizeLimitExceededException;
@@ -41,6 +40,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import java.util.Hashtable;
 
 /**
  * Demonstrates how to perform a search and limit the number of results returned.
@@ -72,9 +72,7 @@ class SearchCountLimit {
 	public static void main(String[] args) {
 
 		// Set up the environment for creating the initial context
-		Hashtable<String, Object> env = new Hashtable<String, Object>(11);
-		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, "ldap://localhost:11389/o=JNDITutorial");
+        Hashtable<String, Object> env = ConnectionUtils.prepareAnonymousSignUpEnvironment();
 
 		try {
 			// Create initial context
