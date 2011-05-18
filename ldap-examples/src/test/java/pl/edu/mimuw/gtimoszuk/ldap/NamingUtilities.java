@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,5 +35,13 @@ public class NamingUtilities {
 
     public static BasicAttributes newCaseInsensitiveBasicAttributes() {
         return new BasicAttributes(true);
+    }
+
+    public static <T> List<T> toList(NamingEnumeration<T> enumeration, int maxEntries) throws NamingException {
+        List<T> list = new ArrayList<T>();
+        while (list.size() < maxEntries && enumeration.hasMore()) {
+            list.add(enumeration.next());
+        }
+        return list;
     }
 }

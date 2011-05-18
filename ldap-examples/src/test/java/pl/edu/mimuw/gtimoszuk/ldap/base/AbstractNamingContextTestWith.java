@@ -1,8 +1,11 @@
 package pl.edu.mimuw.gtimoszuk.ldap.base;
 
+import com.google.common.base.Preconditions;
 import org.junit.After;
 import org.junit.Before;
 import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
+
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
 
 import javax.naming.Context;
 import javax.naming.NameNotFoundException;
@@ -18,11 +21,18 @@ abstract public class AbstractNamingContextTestWith<T extends Context> {
 
     private T context;
 
-    protected T getContext() {
-        return context;
+    protected abstract T newContext(Hashtable<String,Object> contextEnvironment) throws NamingException;
+
+    protected void augumentGivens() throws NamingException {
     }
 
-    protected abstract T newContext(Hashtable<String,Object> contextEnvironment) throws NamingException;
+    protected void cleanUpPossibleFixtureChanges() throws NamingException {
+    }
+
+    protected T getContext() {
+        Preconditions.checkState(context != null, "Could not get context - no open context present");
+        return context;
+    }
 
     @Before
     public final void setUp() throws NamingException {
@@ -39,12 +49,6 @@ abstract public class AbstractNamingContextTestWith<T extends Context> {
         closeContext();
     }
 
-    protected void augumentGivens() throws NamingException {
-    }
-
-    protected void cleanUpPossibleFixtureChanges() throws NamingException {
-    }
-
     protected void createContextUsing(Hashtable<String, Object> connectionParameters) throws NamingException {
         context = newContext(connectionParameters);
     }
@@ -53,6 +57,7 @@ abstract public class AbstractNamingContextTestWith<T extends Context> {
         if (context != null) {
             context.close();
         }
+        context = null;
     }
 
 }

@@ -32,6 +32,8 @@ public class Fixture {
     public static final int numberOfEntriesWithSnGeisel = 1;
 
     public static String peopleOU = "ou=People";
+    public static String tedGeiselTelephoneNumber = "+1 408 555 5252";
+    public static int numberOfTedGeiselTelephoneNumbers = 1;
 
     //TODO remove duplication, extract constants
     private static Hashtable<String, Object> prepareAnonymousSignUpEnvironment(String ldapServerHostname, int ldapServerPort) {
@@ -62,5 +64,7 @@ public class Fixture {
     }
 
 
-
+    public static Hashtable<String, Object> prepareAnonymousSignUpEnvironment() {
+        return prepareAnonymousSignUpEnvironment(ldapServerHostname, ldapServerPort);
+    }
 }

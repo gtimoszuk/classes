@@ -1,6 +1,8 @@
 package pl.edu.mimuw.gtimoszuk.ldap.topics;
 
 import org.junit.Test;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
+
 import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
 import pl.edu.mimuw.gtimoszuk.ldap.TestIntentionRevealers;
 import pl.edu.mimuw.gtimoszuk.ldap.base.AbstractNamingContextTestWithInitialDirContext;

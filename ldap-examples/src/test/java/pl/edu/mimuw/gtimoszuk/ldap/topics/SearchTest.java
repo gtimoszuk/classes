@@ -3,12 +3,16 @@ package pl.edu.mimuw.gtimoszuk.ldap.topics;
 import com.google.common.collect.Multimap;
 import org.junit.Ignore;
 import org.junit.Test;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
+
 import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
 import pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities;
 import pl.edu.mimuw.gtimoszuk.ldap.base.AbstractNamingContextTestWithInitialDirContext;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.SizeLimitExceededException;
+import javax.naming.TimeLimitExceededException;
 import javax.naming.directory.*;
 import java.util.List;
 
@@ -16,10 +20,10 @@ import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities.toMultimap;
 import static pl.edu.mimuw.gtimoszuk.ldap.LdapAttributesNames.*;
 import static pl.edu.mimuw.gtimoszuk.ldap.TestIntentionRevealers.oneFor;
-import static pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities.toList;
 
 public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
 
@@ -40,7 +44,7 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
         NamingEnumeration<SearchResult> matchingEntries = getContext().search("ou=People", matchAttrs, requestedAttributes);
 
         //then
-        List<SearchResult> results = toList(matchingEntries);
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
         assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
         Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
         assertThat(foundEntryAttributes.keySet().size(), is(expectedAttributesCount));
@@ -48,12 +52,11 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
         assertThat(foundEntryAttributes.containsEntry(sn, searchedSN), is(true));
     }
 
-    @Ignore("Not done yet - the exception thrown really killed me...")
     @Test
     public void shouldReturnResultsUpToLimit() throws NamingException {
         //given
         createContextUsing(Fixture.anonymousConnectionParameters);
-        String surnameStartsWithMFilter = "(sn=M*)";
+        String surnameStartsWithMFilter = "(sn=*)";
         int maxResults = 1;
         SearchControls searchControls = new SearchControls();
         searchControls.setCountLimit(maxResults);
@@ -63,12 +66,60 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
                 getContext().search(Fixture.peopleOU, surnameStartsWithMFilter, searchControls);
 
         //then
-        List<SearchResult> results = toList(foundEntries);
+        List<SearchResult> results = NamingUtilities.toList(foundEntries, maxResults);
         assertThat(results.size() <= maxResults, is(true));
     }
 
     @Test
-    public void shouldSearchObject() throws NamingException {
+    public void willThrowExceptionWhenCallingHasMoreAfterGettingElementsUpToLimit() throws NamingException {
+        //given
+        createContextUsing(Fixture.anonymousConnectionParameters);
+        String surnameStartsWithMFilter = "(sn=*)";
+        int maxResults = 2;
+        SearchControls searchControls = new SearchControls();
+        searchControls.setCountLimit(maxResults);
+
+        NamingEnumeration<SearchResult> foundEntries =
+                getContext().search(Fixture.peopleOU, surnameStartsWithMFilter, searchControls);
+        foundEntries.next();
+        foundEntries.next();
+        try {
+            //when
+            foundEntries.hasMore();
+
+            //then an exception is thrown. Otherwise:
+            fail("Expected " + SizeLimitExceededException.class.getSimpleName());
+        } catch (SizeLimitExceededException e) {
+            //this was expected
+        }
+    }
+
+    @Test
+    public void willThrowExceptionWhenCallingNextAfterGettingElementsUpToLimit() throws NamingException {
+        //given
+        createContextUsing(Fixture.anonymousConnectionParameters);
+        String surnameStartsWithMFilter = "(sn=*)";
+        int maxResults = 2;
+        SearchControls searchControls = new SearchControls();
+        searchControls.setCountLimit(maxResults);
+
+        NamingEnumeration<SearchResult> foundEntries =
+                getContext().search(Fixture.peopleOU, surnameStartsWithMFilter, searchControls);
+        foundEntries.next();
+        foundEntries.next();
+        try {
+            //when
+            foundEntries.next();
+
+            //then an exception is thrown. Otherwise:
+            fail("Expected " + SizeLimitExceededException.class.getSimpleName());
+        } catch (SizeLimitExceededException e) {
+            //this was expected
+        }
+    }
+
+    @Test
+    public void shouldSearchWithObjectScope() throws NamingException {
         //given
         createContextUsing(Fixture.anonymousConnectionParameters);
         String[] attrIDs = { "sn", "telephonenumber", "golfhandicap", "mail" };
@@ -81,11 +132,70 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
         NamingEnumeration<SearchResult> matchingEntries = getContext().search("cn=Ted Geisel, ou=People", filter, searchControls);
 
         //then
-        List<SearchResult> results = toList(matchingEntries);
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
         assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
         Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
         assertThat(foundEntryAttributes.containsKey(mail), is(true));
         assertThat(foundEntryAttributes.containsEntry(sn, "Geisel"), is(true));
+    }
+
+    @Test
+    public void shouldSearchWithSubtreeScope() throws NamingException {
+        //given
+        createContextUsing(Fixture.anonymousConnectionParameters);
+        String[] attrIDs = { "sn", "telephonenumber", "golfhandicap", "mail" };
+        SearchControls searchControls = new SearchControls();
+        searchControls.setReturningAttributes(attrIDs);
+        searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        String filter = "(&(sn=Geisel)(mail=*))";
+
+        //when
+        NamingEnumeration<SearchResult> matchingEntries = getContext().search("", filter, searchControls);
+
+        //then
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
+        assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
+        Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
+        assertThat(foundEntryAttributes.containsKey(mail), is(true));
+        assertThat(foundEntryAttributes.containsEntry(sn, "Geisel"), is(true));
+    }
+
+    @Test
+    public void shouldSearchUsingFilter() throws NamingException {
+        //given
+        createContextUsing(Fixture.anonymousConnectionParameters);
+        String[] attrIDs = { "sn", "telephonenumber", "golfhandicap", "mail" };
+        SearchControls searchControls = new SearchControls();
+        searchControls.setReturningAttributes(attrIDs);
+        String filter = "(&(sn=Geisel)(mail=*))";
+
+        //when
+        NamingEnumeration<SearchResult> matchingEntries = getContext().search("ou=People", filter, searchControls);
+
+        //then
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
+        assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
+        Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
+        assertThat(foundEntryAttributes.containsKey(mail), is(true));
+        assertThat(foundEntryAttributes.containsEntry(sn, "Geisel"), is(true));
+    }
+
+    @Test
+    public void shouldSearchUsingFilterAndReturnAllAttributes() throws NamingException {
+        //given
+        createContextUsing(Fixture.anonymousConnectionParameters);
+        String filter = "(&(sn=Geisel)(mail=*))";
+
+        //when
+        NamingEnumeration<SearchResult> matchingEntries = getContext().search("ou=People", filter, new SearchControls());
+
+        //then
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
+        assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
+        Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
+        assertThat(foundEntryAttributes.keySet().size(), is(Fixture.tedGeiselAttributesSize));
+        assertThat(foundEntryAttributes.get(objectClass).size(), is(Fixture.tedGeiselObjectclassesCount));
+        assertThat(getOnlyElement(foundEntryAttributes.get(mail)), is((Object) Fixture.tedGeiselMail));
     }
 
     @Test
@@ -101,7 +211,7 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
         NamingEnumeration<SearchResult> matchingEntries = getContext().search("ou=People", matchAttrs);
 
         //then
-        List<SearchResult> results = toList(matchingEntries);
+        List<SearchResult> results = NamingUtilities.toList(matchingEntries);
         assertThat(results.size(), is(Fixture.numberOfEntriesWithSnGeisel));
         Multimap<String,Object> foundEntryAttributes = toMultimap(getOnlyElement(results).getAttributes());
         assertThat(foundEntryAttributes.containsKey(mail), is(true));
@@ -125,7 +235,7 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
     }
 
     @Ignore("This probably won't pass without ingerence into LDAP connection (by slowing it down) or adding more test data")
-    @Test(/*expected = TimeLimitExceededException.class*/)
+    @Test(expected = TimeLimitExceededException.class)
     public void shouldThrowExceptionOnTimeLimitExceeded() throws NamingException {
         //given
         createContextUsing(Fixture.anonymousConnectionParameters);
@@ -137,6 +247,7 @@ public class SearchTest extends AbstractNamingContextTestWithInitialDirContext {
 
         //when
         getContext().search("", "(objectclass=*)", ctls);
-        //then no exception is thrown
+
+        //then an exception is thrown
     }
 }

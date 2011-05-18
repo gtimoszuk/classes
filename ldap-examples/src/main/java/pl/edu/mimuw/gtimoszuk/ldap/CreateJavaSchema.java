@@ -1,4 +1,4 @@
-package pl.edu.mimuw.gtimoszuk.ldap.operations;
+package pl.edu.mimuw.gtimoszuk.ldap;
 
 import javax.naming.Context;
 import javax.naming.NamingException;

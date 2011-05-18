@@ -1,0 +1,38 @@
+1. Instalacja OpenDS
+
+LDAP Listener Port: 1389
+Password: manager
+
+Directory Base DN: o=JNDITutorial
+
+2. Konfiguracja OpenDS
+
+#dla wygody
+export PATH=$PATH:/sciezka/do/instalacji/OpenDS/bin
+
+dsconfig -h localhost -p 4444 -D "cn=Directory Manager" -w manager
+
+Edytujemy pole
+Password Policy > Default Password Policy > default-password-storage-scheme
+i nadajemy mu wartość:
+Clear (od: clear text)
+
+(opcjonalnie) Zmieniamy wartość pola:
+Global Configuration > return-bind-error-messages
+na:
+true
+
+Zmieniamy wartość pola:
+SASL Mechanism Handler > DIGEST-MD5 > realm
+na:
+JNDITutorial
+
+
+3. Modyfikacja schematu
+
+Uruchamiamy program CreateJavaSchema z argumentami:
+"-ncn=Directory Manager" -pmanager
+
+4. Wprowadzenie danych testowych
+ldapmodify -h localhost -p 1389 -D "cn=Directory Manager" -w manager -a -c -f tutorial.ldif
+(prawdopodobnie zostaną zaraportowane 3 błędy w imporcie - nie są one jednak istotne dla działania testów)

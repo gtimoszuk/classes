@@ -1,6 +1,8 @@
 package pl.edu.mimuw.gtimoszuk.ldap.topics;
 
 import org.junit.Test;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
+
 import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
 import pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities;
 import pl.edu.mimuw.gtimoszuk.ldap.TestIntentionRevealers;
@@ -33,12 +35,10 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         getContext().unbind(additionalAlreadyUsedFruitCN);
     }
 
-    public static final String peopleOU = "ou=People";
-
-    /**
-     * http://download.oracle.com/javase/tutorial/jndi/ops/lookup.html
-     * http://download.oracle.com/javase/tutorial/jndi/ops/examples/Lookup.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/lookup.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Lookup.java
+    */
     @Test
     public void shouldLookupAnEntry() throws NamingException {
         //given
@@ -52,9 +52,9 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
     }
 
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/lookup.html
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/lookup.html
+    */
     @Test(expected = NameNotFoundException.class)
     public void shouldThrowExceptionWhenLookupFoundNoEntry() throws NamingException {
         //given
@@ -66,33 +66,33 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         //then an exception is thrown
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/List.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/List.java
+    */
     @Test
     public void shouldListAllEntries() throws NamingException {
         //given
         createContextUsing(Fixture.anonymousConnectionParameters);
 
         //when
-        NamingEnumeration<NameClassPair> enumeration = getContext().list(peopleOU);
+        NamingEnumeration<NameClassPair> enumeration = getContext().list(Fixture.peopleOU);
 
         //then
         assertThat(NamingUtilities.toList(enumeration).size(), is(Fixture.numberOfEntriesUnderPeopleDN));
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/ListBindings.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/ListBindings.java
+    */
     @Test
     public void shouldListAllBindings() throws NamingException {
         //given
         createContextUsing(Fixture.anonymousConnectionParameters);
 
         //when
-        NamingEnumeration<Binding> bindings = getContext().listBindings("ou=People");
+        NamingEnumeration<Binding> bindings = getContext().listBindings(Fixture.peopleOU);
 
         //then
         assertThat(NamingUtilities.toList(bindings).size(), is(Fixture.numberOfEntriesUnderPeopleDN));
@@ -100,9 +100,9 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
 
     //TODO terminology: bind vs signUp vs create initial context; add vs bind (both latter prefered?)
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    */
     @Test(expected = NoPermissionException.class)
     public void shouldNotAllowWriteAccessToAnonymousUser() throws NamingException {
         //given
@@ -115,6 +115,7 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         //then an exception is thrown
     }
 
+    //UseDiff
     @Test(expected = NoPermissionException.class)
     public void shouldNotAllowWriteAccessAfterChangingContextAuthenticationToAnonymous() throws NamingException {
         //given
@@ -126,10 +127,10 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         getContext().bind(Fixture.atFirstUnusedCN, new Fruit("orange"));
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/Bind.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Bind.java
+    */
     @Test
     public void shouldCreateNewEntry() throws NamingException {
         //given
@@ -147,10 +148,10 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         assertThat(fruitObject.toString(), is(fruitName));
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/Rebind.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Rebind.java
+    */
     @Test
     public void shouldCreateNewEntryUsingRebind() throws NamingException {
         //given
@@ -168,10 +169,10 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         assertThat(fruitObject.toString(), is(fruitName));
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/Rebind.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Rebind.java
+    */
     @Test
     public void shouldReplaceExistingEntry() throws NamingException {
         //given
@@ -188,9 +189,9 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         assertThat(fruitObject.toString(), is(fruitName));
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    */
     @Test
     public void shouldAllowUnbindingNonexistentObjects() throws NamingException {
         //given
@@ -203,10 +204,10 @@ public class OperationsTest extends AbstractNamingContextTestWithInitialContext 
         //then an exception is thrown
     }
 
-    /**
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/list.html
-     *  http://download.oracle.com/javase/tutorial/jndi/ops/examples/Unbind.java
-     */
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/list.html
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Unbind.java
+    */
     @Test
     public void shouldDeleteObjectFromDirectory() throws NamingException {
         //given

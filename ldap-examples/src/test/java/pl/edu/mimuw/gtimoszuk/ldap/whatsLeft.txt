@@ -1,11 +1,5 @@
 Shared
-ModAttrs
-SearchCountLimit
-SearchSubtree
-SearchTimeLimit
-SearchWithFilter
-SearchWithFilterRetAll
-Digest
-DigestRealm
+
+test na cleartext
 
 refactorings
