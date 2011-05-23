@@ -3,19 +3,12 @@ package pl.edu.mimuw.gtimoszuk.ldap.base;
 import com.google.common.base.Preconditions;
 import org.junit.After;
 import org.junit.Before;
-import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
-
-import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
 
 import javax.naming.Context;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import java.util.Hashtable;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.directoryManagerConnectionParameters;
 
 abstract public class AbstractNamingContextTestWith<T extends Context> {
 
@@ -36,7 +29,7 @@ abstract public class AbstractNamingContextTestWith<T extends Context> {
 
     @Before
     public final void setUp() throws NamingException {
-        createContextUsing(Fixture.directoryManagerConnectionParameters);
+        createContextUsing(directoryManagerConnectionParameters);
         augumentGivens();
         closeContext();
     }
@@ -44,7 +37,7 @@ abstract public class AbstractNamingContextTestWith<T extends Context> {
     @After
     public final void tearDown() throws NamingException {
         closeContext();
-        createContextUsing(Fixture.directoryManagerConnectionParameters);
+        createContextUsing(directoryManagerConnectionParameters);
         cleanUpPossibleFixtureChanges();
         closeContext();
     }

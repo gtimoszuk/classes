@@ -7,4 +7,5 @@ public class LdapAttributesNames {
     public static final String golfHandicap = "golfHandicap";
     public static final String mail = "mail";
     public static final String jpegPhoto = "jpegPhoto";
+    public static final String supportedSASLMechanisms = "supportedSASLMechanisms";
 }

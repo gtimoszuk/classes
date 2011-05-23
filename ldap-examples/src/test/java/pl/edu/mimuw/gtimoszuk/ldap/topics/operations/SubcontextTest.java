@@ -1,43 +1,52 @@
-package pl.edu.mimuw.gtimoszuk.ldap.topics;
+package pl.edu.mimuw.gtimoszuk.ldap.topics.operations;
 
 import org.junit.Test;
-import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.*;
-
-import pl.edu.mimuw.gtimoszuk.ldap.Fixture;
-import pl.edu.mimuw.gtimoszuk.ldap.TestIntentionRevealers;
 import pl.edu.mimuw.gtimoszuk.ldap.base.AbstractNamingContextTestWithInitialDirContext;
 
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.*;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.DirContext;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.atFirstUnusedOU;
+import static pl.edu.mimuw.gtimoszuk.ldap.Fixture.directoryManagerConnectionParameters;
+import static pl.edu.mimuw.gtimoszuk.ldap.LdapAttributesNames.objectClass;
+import static pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities.entryExistsIn;
 import static pl.edu.mimuw.gtimoszuk.ldap.NamingUtilities.newCaseInsensitiveBasicAttributes;
 
+/*
+http://download.oracle.com/javase/tutorial/jndi/ops/create.html
+ */
 public class SubcontextTest extends AbstractNamingContextTestWithInitialDirContext {
 
     private String additionalSubcontextOU = "ou=Some additional subcontext OU";
 
     @Override
     protected void augumentGivens() throws NamingException {
-        assertThat(TestIntentionRevealers.entryExistsIn(getContext(), Fixture.atFirstUnusedOU), is(false));
-        assertThat(TestIntentionRevealers.entryExistsIn(getContext(), additionalSubcontextOU), is(false));
+        assertThat(entryExistsIn(getContext(), atFirstUnusedOU), is(false));
+        assertThat(entryExistsIn(getContext(), additionalSubcontextOU), is(false));
         getContext().createSubcontext(additionalSubcontextOU, exampleSubcontextContextAttributes());
     }
 
     @Override
     protected void cleanUpPossibleFixtureChanges() throws NamingException {
-        getContext().destroySubcontext(Fixture.atFirstUnusedOU);
+        getContext().destroySubcontext(atFirstUnusedOU);
         getContext().destroySubcontext(additionalSubcontextOU);
     }
 
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Create.java
+     */
     @Test
     public void shouldCreateSubcontext() throws NamingException {
         //given
-        createContextUsing(Fixture.directoryManagerConnectionParameters);
-        String newContextOU = Fixture.atFirstUnusedOU;
+        createContextUsing(directoryManagerConnectionParameters);
+        String newContextOU = atFirstUnusedOU;
 
         //when
         DirContext newContext = getContext().createSubcontext(newContextOU, exampleSubcontextContextAttributes());
@@ -46,6 +55,15 @@ public class SubcontextTest extends AbstractNamingContextTestWithInitialDirConte
         assertThat(newContext.getNameInNamespace(), is(newContextOU + "," + getContext().getNameInNamespace()));
         NamingEnumeration<NameClassPair> subcontexts = getContext().list("");
         assertThat(containsContextWithName(newContextOU, subcontexts), is(true));
+    }
+
+    private Attributes exampleSubcontextContextAttributes() {
+        Attributes attributes = newCaseInsensitiveBasicAttributes();
+        Attribute objectClasses = new BasicAttribute(objectClass);
+        objectClasses.add("top");
+        objectClasses.add("organizationalUnit");
+        attributes.put(objectClasses);
+        return attributes;
     }
 
     private boolean containsContextWithName(String name, NamingEnumeration<NameClassPair> contexts) throws NamingException {
@@ -58,32 +76,26 @@ public class SubcontextTest extends AbstractNamingContextTestWithInitialDirConte
         return false;
     }
 
+    /*
+    http://download.oracle.com/javase/tutorial/jndi/ops/examples/Destroy.java
+     */
     @Test
     public void shouldDestroySubcontext() throws NamingException {
         //given
-        createContextUsing(Fixture.directoryManagerConnectionParameters);
+        createContextUsing(directoryManagerConnectionParameters);
         String contextToDestroyOU = additionalSubcontextOU;
 
         //when
         getContext().destroySubcontext(contextToDestroyOU);
 
         //then
-        assertThat(TestIntentionRevealers.entryExistsIn(getContext(), contextToDestroyOU), is(false));
-    }
-
-    private Attributes exampleSubcontextContextAttributes() {
-        Attributes attrs = newCaseInsensitiveBasicAttributes();
-        Attribute objclass = new BasicAttribute("objectclass");
-        objclass.add("top");
-        objclass.add("organizationalUnit");
-        attrs.put(objclass);
-        return attrs;
+        assertThat(entryExistsIn(getContext(), contextToDestroyOU), is(false));
     }
 
     @Test
     public void shouldNotThrowWhenDestroyingNonexistentContext() throws NamingException {
         //given
-        createContextUsing(Fixture.directoryManagerConnectionParameters);
+        createContextUsing(directoryManagerConnectionParameters);
 
         //when
         getContext().destroySubcontext("ou=Some nonexistent context name");
