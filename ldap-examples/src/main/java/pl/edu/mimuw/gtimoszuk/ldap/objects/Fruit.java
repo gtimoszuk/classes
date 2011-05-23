@@ -31,12 +31,12 @@ package pl.edu.mimuw.gtimoszuk.ldap.objects;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import pl.edu.mimuw.gtimoszuk.ldap.objects.factories.FruitFactory;
+
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.Referenceable;
 import javax.naming.StringRefAddr;
-
-import pl.edu.mimuw.gtimoszuk.ldap.objects.factories.FruitFactory;
 
 /**
  * This class is used by the Bind example. It is a referenceable class that can be stored by service providers like the
