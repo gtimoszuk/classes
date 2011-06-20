@@ -1,0 +1,55 @@
+I. Organizacja testów
+Testy starałemn się organizować w pakietach i klasach tak, aby ich struktura odpowiadała spisowi treści tutoriala z
+http://download.oracle.com/javase/tutorial/jndi/TOC.html. Jednej stronie html odpowiada jedna klasa testowa, organizacja
+stron w spisie treści jest odzwierciedlona przez strukturę pakietów. Pojedyncza klasa testowa zawiera zagadnienia
+omawiane w przykładach, do których tutorial linkuje w danej stronie tutoriala. Klasy testowe i ich metody są opatrzone
+URLami do (odpowiednio) strony tutoriala omawiającej dane zagadnienie i przykładów z niej linkowanych.
+
+Pokrtye zostały tematy z:
+Naming and Directory Operations (pakiet topics.operations)
+Advanced Topics for LDAP Users (część) (pakiet topics.advanced)
+
+II. Przygotowanie środowiska testowego:
+1. Instalacja OpenDS
+
+    LDAP Listener Port: 1389
+    Password: manager
+
+    Directory Base DN: o=JNDITutorial
+
+2. Konfiguracja OpenDS
+
+    #dla wygody
+    export PATH=$PATH:/sciezka/do/instalacji/OpenDS/bin
+
+    dsconfig -h localhost -p 4444 -D "cn=Directory Manager" -w manager
+
+Edytujemy pole
+    Password Policy > Default Password Policy > default-password-storage-scheme
+i nadajemy mu wartość:
+    Clear (od: clear text)
+W ten sposób ustawiliśmy, aby serwer przechowywał hasła otwartym tekstem. Jest to potrzebne, aby działało logowanie
+przy pomocy mechanizmu DIGEST-MD5.
+
+(opcjonalnie) Zmieniamy wartość pola:
+    Global Configuration > return-bind-error-messages
+na:
+    true
+Może nam to pomóc w razie ewentualnych problemów z nazwą hosta podawaną w czasie logowania przez DigestMD5Test.
+(U mnie takie wystąpiły, gdy jako nazwę hosta podawałem localhost. W komunikacie o błędzie zobaczyłem jakiej nazwy hosta
+serwer oczekiwał)
+
+Zmieniamy wartość pola:
+    SASL Mechanism Handler > DIGEST-MD5 > realm
+na:
+    JNDITutorial
+
+
+3. Modyfikacja schematu
+
+Uruchamiamy program CreateJavaSchema z argumentami:
+    "-ncn=Directory Manager" -pmanager
+
+4. Wprowadzenie danych testowych
+    ldapmodify -h localhost -p 1389 -D "cn=Directory Manager" -w manager -a -c -f tutorial.ldif
+(prawdopodobnie zostaną zaraportowane 3 błędy w imporcie - nie są one jednak istotne dla działania testów)
