@@ -1,0 +1,41 @@
+allprojects {
+
+	apply plugin: 'eclipse'
+	apply plugin: 'war'
+
+	repositories {
+		mavenLocal()
+		mavenCentral()
+		mavenRepo urls: "http://repository.jboss.org/maven2-brew/"
+		mavenRepo urls: "http://repository.jboss.com/maven2/"
+		mavenRepo urls: "http://repository.springsource.com/maven/bundles/release"
+		mavenRepo urls: "http://repository.springsource.com/maven/bundles/external"
+	}
+	
+	sourceCompatibility = 1.6
+	
+//	configurations {
+//		all*.exclude group: 'commons-logging', module: 'commons-logging'
+//	}
+	
+	dependencies {
+		compile junitDep
+		compile slf4jAPIDep
+		compile slf4jOverLog4jDep
+		compile slf4jSpringDep
+		compile logbackCoreDep
+		compile logbackClassicDep
+		compile groovyDep
+		compile guavaDep
+		compile springCoreDep
+		compile hibernateDep
+		compile springTestDep
+		compile springOrmDep
+		compile springAopDep
+		compile springBeansDep
+		compile postgreSqlDep
+		compile javaasistDep
+		compile hibernateValidatorDep
+	}
+}
+
