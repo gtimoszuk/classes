@@ -36,6 +36,9 @@ allprojects {
 		compile postgreSqlDep
 		compile javaasistDep
 		compile hibernateValidatorDep
+		compile aspectjrtDep
+		compile aspectjtoolsDep
+		compile aspectjweaver
 	}
 }
 

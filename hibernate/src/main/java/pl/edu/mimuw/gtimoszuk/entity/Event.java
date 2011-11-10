@@ -71,4 +71,10 @@ public class Event {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return "Event [id=" + id + ", version=" + version + ", date=" + date + ", place=" + place + ", name=" + name
+				+ "]";
+	}
+
 }
