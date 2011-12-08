@@ -53,7 +53,8 @@ public class AddRemoveTest extends BaseTest {
 			secondNode.setProperty("message", "world!");
 			relationship1.setProperty("message", "brave Neo4j ");
 			relationship2.setProperty("message", "Really brave students");
-			tx.success(); // XXX:gti without it tx finishes but no changes preserved
+			tx.success(); // XXX:gti without it tx finishes but no changes
+							// preserved
 		} finally {
 			tx.finish();
 		}
