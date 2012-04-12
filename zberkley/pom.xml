@@ -13,7 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>4.8.1</junit.version>
-		<berkeleydb.version>4.1.6</berkeleydb.version>
+		<berkeleydb.version>5.0.34</berkeleydb.version>
 	</properties>
 
 	<dependencies>
